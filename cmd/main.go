@@ -11,10 +11,10 @@ func main() {
 	slog.Info("暗号化のサンプルコードを実行する", slog.String("DES暗号方式","非推奨"))
 
 	desService := &cryptos.DESExecuter{}
+	aesService := &cryptos.AESExecuter{}
+	aesServiceInterface := cryptos.NewAESService(aesService)
 	desServiceInterface := cryptos.NewDESService(desService)
 	var inputText string = "Hello" // デフォルトの入力文字列を設定
-	// fmt.Printf("暗号化する文字列：")
-	// fmt.Scanln(&inputText)
 
 	fmt.Println("\n\n入力文字列:", inputText)
 	plainText := strings.FormatByteStringDES(inputText)
@@ -26,7 +26,6 @@ func main() {
 		slog.Error("暗号化に失敗しました", slog.String("error", err.Error()))
 		return
 	}
-	// slog.Info("暗号化に成功しました", slog.String("cipherText", string(cipherText)))
 
 	decryptedText, err := desServiceInterface.Decrypt(cipherText)
 	if err != nil {
