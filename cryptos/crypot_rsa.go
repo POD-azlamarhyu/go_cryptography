@@ -3,7 +3,7 @@ package cryptos
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha512"
+	"crypto/sha256"
 	"fmt"
 )
 
@@ -23,7 +23,7 @@ func Encrypt(plainText string) ([]byte, error) {
 
 	key.privateKey = privateKey
 	key.publicKey = &privateKey.PublicKey
-	cipherText, err := rsa.EncryptOAEP(sha512.New(), rand.Reader, key.publicKey, []byte(plainText), nil)
+	cipherText, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, key.publicKey, []byte(plainText), nil)
 	if err != nil {
 		fmt.Println("暗号化に失敗しました")
 		return nil, err
@@ -32,7 +32,7 @@ func Encrypt(plainText string) ([]byte, error) {
 }
 
 func Decrypt(cipherText string) ([]byte, error) {
-	plainText, err := rsa.DecryptOAEP(sha512.New(), rand.Reader, key.privateKey, []byte(cipherText), nil)
+	plainText, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, key.privateKey, []byte(cipherText), nil)
 	if err != nil {
 		fmt.Println("復号に失敗しました")
 		return nil, err
