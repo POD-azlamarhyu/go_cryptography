@@ -15,9 +15,16 @@ import (
 
 type AESExecuter struct {}
 
+type AESKeyStruct struct{
+	shareKey *[]byte
+}
+
+var AESkey = &AESKeyStruct{}
+
 func (s *AESExecuter) Encrypt(plainText string) (string, error){
 	aesKey := config.GetAESKey()
-	block, err := aes.NewCipher(aesKey)
+	AESkey.shareKey = &aesKey
+	block, err := aes.NewCipher(*AESkey.shareKey)
 	if err != nil {
 		return "", err
 	}
@@ -34,13 +41,13 @@ func (s *AESExecuter) Encrypt(plainText string) (string, error){
 	}
 
 	ciphertext := aesgcm.Seal(nonce, nonce, []byte(plainText), nil)
-	fmt.Printf("暗号化した文字列：%x\n\n", ciphertext)
+	fmt.Printf("暗号化した文字列：%x\n", ciphertext)
 	return base64.StdEncoding.EncodeToString(ciphertext),nil
 }
 
 func (s *AESExecuter) Decrypt(cipherText string) (string, error){
-	aesKey := config.GetAESKey()
-	block, err := aes.NewCipher(aesKey)
+
+	block, err := aes.NewCipher(*AESkey.shareKey)
 	if err != nil {
 		return "", err
 	}
@@ -66,6 +73,6 @@ func (s *AESExecuter) Decrypt(cipherText string) (string, error){
 	if err != nil {
 		return "", err
 	}
-	fmt.Printf("復号化した文字列：%s\n\n", plaintext)
+	fmt.Printf("復号化した文字列：%s\n", plaintext)
 	return string(plaintext), nil
 }
