@@ -2,8 +2,8 @@ package cryptos
 
 // 依存性逆転をここで利用する。
 type IAESService interface {
-	Encrypt(plainText []byte) ([]byte, error)
-	Decrypt(cipherText []byte) ([]byte, error)
+	Encrypt(plainText string) (string, error)
+	Decrypt(cipherText string) (string, error)
 }
 
 type AESService struct {
@@ -16,10 +16,10 @@ func NewAESService(service IAESService) *AESService {
 	}
 }
 
-func (s *AESService) Encrypt(plainText []byte) ([]byte, error) {
+func (s *AESService) Encrypt(plainText string) (string, error) {
 	return s.AESExecuter.Encrypt(plainText)
 }
 
-func (s *AESService) Decrypt(cipherText []byte) ([]byte, error) {
+func (s *AESService) Decrypt(cipherText string) (string, error) {
 	return s.AESExecuter.Decrypt(cipherText)
 }
