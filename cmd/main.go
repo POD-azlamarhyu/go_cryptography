@@ -34,6 +34,19 @@ func main() {
 	}
 
 	//TODO: 64ビットずつ暗号化と復号化を行うので、任意の文字列数ではなく、64ビット（8バイト）の倍数の文字列を入力する必要がある。
-	fmt.Println("\n\n暗号化後の文字列:", cipherText,string(cipherText))
-	fmt.Println("復号化後の文字列:", decryptedText,string(decryptedText))
+	fmt.Println("\n\n暗号化後の文字列:",string(cipherText))
+	fmt.Println("復号化後の文字列:",string(decryptedText))
+
+	inputTextAes := "Unko!"
+	fmt.Println("入力文字列: ",inputTextAes)
+	cipherTextAes,err := aesServiceInterface.Encrypt(inputTextAes)
+	if err != nil{
+		slog.Error("暗号化に失敗しました", slog.String("error:", err.Error()))
+	}
+	decryptedTextAes,err := aesServiceInterface.Decrypt(cipherTextAes)
+	if err != nil{
+		slog.Error("エラーが発生", slog.String("error:", err.Error()))
+	}
+	fmt.Println("\n\n暗号化後の文字列:", string(cipherTextAes))
+	fmt.Println("復号化後の文字列:", string(decryptedTextAes))
 }
