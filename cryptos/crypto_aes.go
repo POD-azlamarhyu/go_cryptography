@@ -5,59 +5,67 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"cryptography_tutorial/config"
+	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 )
 
 type AESExecuter struct {}
 
-func (s *AESExecuter) Encrypt(plainText []byte) ([]byte, error){
+func (s *AESExecuter) Encrypt(plainText string) (string, error){
 	aesKey := config.GetAESKey()
-	block, err := aes.NewCipher([]byte(aesKey))
+	block, err := aes.NewCipher(aesKey)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	nonce := make([]byte, aesgcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil{
 		log.Fatalln("エラーが発生")
-		return nil, err
+		return "", err
 	}
 
-	ciphertext := aesgcm.Seal(nil, nonce, plainText, nil)
+	ciphertext := aesgcm.Seal(nonce, nonce, []byte(plainText), nil)
 	fmt.Printf("暗号化した文字列：%x\n\n", ciphertext)
-	return ciphertext,nil
+	return base64.StdEncoding.EncodeToString(ciphertext),nil
 }
 
-func (s *AESExecuter) Decrypt(cipherText []byte) ([]byte, error){
+func (s *AESExecuter) Decrypt(cipherText string) (string, error){
 	aesKey := config.GetAESKey()
-	block, err := aes.NewCipher([]byte(aesKey))
+	block, err := aes.NewCipher(aesKey)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return nil, err
+		slog.Error("cipher NewGCM")
+		return "", err
 	}
-	
+	data, err := base64.StdEncoding.DecodeString(cipherText)
+	if err != nil{
+		slog.Error("base64 encoding errr")
+		return "", err
+	}
 	nonceSize := aesgcm.NonceSize()
 	if len(cipherText) < nonceSize {
-		log.Fatalln("不正な暗号文です")
-		return nil, err
+		slog.Error("不正な値です")
+		return "",errors.New("不正な値")
 	}
 
-	nonce, cipherText := cipherText[:nonceSize], cipherText[nonceSize:]
-	plaintext, err := aesgcm.Open(nil, nonce, cipherText, nil)
+	nonce, cipherTextByte := data[:nonceSize], data[nonceSize:]
+	plaintext, err := aesgcm.Open(nil, nonce, cipherTextByte, nil)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	fmt.Printf("復号化した文字列：%s\n\n", plaintext)
-	return plaintext, nil
+	return string(plaintext), nil
 }
