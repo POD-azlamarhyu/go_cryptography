@@ -19,8 +19,18 @@ func GetAESKeyName() string {
 	return AES_KEY
 }
 
-func GetAESKey() string {
-	return os.Getenv(GetAESKeyName())
+func GetAESKey() []byte {
+	key,err := os.LookupEnv(GetDESKeyName())
+	if !err || len(key) != 32 {
+		randKey := make([]byte, 32)
+		_, err := rand.Read(randKey)
+		if err != nil{
+			return nil
+		}
+		os.Setenv(GetAESKeyName(), string(randKey))
+		return randKey
+	}
+	return []byte(key)
 }
 
 func GetDESKey() []byte {

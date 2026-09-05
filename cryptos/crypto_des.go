@@ -7,9 +7,16 @@ import (
 
 type DESExecuter struct {}
 
+type DESKeyStruct struct{
+	shareKey *[]byte
+}
+
+var DESkey = &AESKeyStruct{}
+
 func (s *DESExecuter) Encrypt(plainText []byte) ([]byte, error) {
 	desKey := config.GetDESKey()
-	cipherBlock, err := des.NewCipher(desKey)
+	DESkey.shareKey = &desKey
+	cipherBlock, err := des.NewCipher(*DESkey.shareKey)
 	if err != nil {
 		return nil, err
 	}
@@ -20,8 +27,8 @@ func (s *DESExecuter) Encrypt(plainText []byte) ([]byte, error) {
 }
 
 func (s *DESExecuter) Decrypt(cipherText []byte) ([]byte, error) {
-	desKey := config.GetDESKey()
-	cipherBlock, err := des.NewCipher(desKey)
+
+	cipherBlock, err := des.NewCipher(*DESkey.shareKey)
 	if err != nil {
 		return nil, err
 	}
