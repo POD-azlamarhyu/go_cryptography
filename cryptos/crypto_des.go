@@ -11,7 +11,7 @@ type DESKeyStruct struct{
 	shareKey *[]byte
 }
 
-var DESkey = &AESKeyStruct{}
+var DESkey = &DESKeyStruct{}
 
 func (s *DESExecuter) Encrypt(plainText []byte) ([]byte, error) {
 	desKey := config.GetDESKey()
