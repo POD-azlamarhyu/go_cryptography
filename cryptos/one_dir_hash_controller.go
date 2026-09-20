@@ -14,5 +14,5 @@ func HashController(){
 		slog.Error("ハッシュの実行に失敗しました", slog.String("error", err.Error()))
 		return
 	}
-	slog.Info("ハッシュの実行に成功しました", slog.String("hashedText", string(hashedText)))
+	slog.Info("ハッシュの実行に成功しました", slog.Any("hashedText", string(hashedText)))
 }
