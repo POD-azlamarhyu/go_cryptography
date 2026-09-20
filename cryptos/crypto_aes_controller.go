@@ -25,5 +25,5 @@ func CryptoAESController() {
 		return
 	}
 	fmt.Println("復号化結果:", string(decryptedText))
-	
+	slog.Info("復号化に成功しました")
 }
