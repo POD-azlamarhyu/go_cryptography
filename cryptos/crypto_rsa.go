@@ -15,13 +15,10 @@ type RSAKey struct {
 
 var key = &RSAKey{}
 
-type RSAService struct{}
+type RSAExecuter struct{}
 
-func NewRSAService()(*RSAService){
-	return &RSAService{}
-}
 
-func (r *RSAService) Encrypt(plainText string) (string, error) {
+func (r *RSAExecuter) Encrypt(plainText string) (string, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
 		fmt.Println("秘密鍵の生成に失敗しました")
@@ -38,7 +35,7 @@ func (r *RSAService) Encrypt(plainText string) (string, error) {
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
-func (r *RSAService) Decrypt(cipherText string) (string, error) {
+func (r *RSAExecuter) Decrypt(cipherText string) (string, error) {
 	decodedText, _ := base64.StdEncoding.DecodeString(cipherText)
 	plainText, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, key.privateKey, decodedText, nil)
 	if err != nil {
