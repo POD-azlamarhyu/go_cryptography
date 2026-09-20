@@ -24,11 +24,14 @@ func main() {
 		cryptos.CryptoAESController()
 	case "rsa":
 		cryptos.RSAController()
+	case "hash":
+		cryptos.HashController()
 	case "help":
 		fmt.Println("Usage: go_cryptography <command>")
 		fmt.Println("des - Run DES encryption sample")
 		fmt.Println("aes - Run AES encryption sample")
 		fmt.Println("rsa - Run RSA encryption sample")
+		fmt.Println("hash - Run hash sample")
 	default:
 		slog.Error("Unknown command", slog.String("command", args[1]))
 		return
